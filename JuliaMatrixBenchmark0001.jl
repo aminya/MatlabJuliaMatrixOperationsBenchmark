@@ -23,125 +23,129 @@
 
 function JuliaMatrixBenchmark0001( operationMode = 2 )
 
-  OPERATION_MODE_PARTIAL  = 1; # For Testing (Runs Fast)
-  OPERATION_MODE_FULL     = 2;
 
-  cRunTimeFunctions = [MatrixGenerationRunTime, MatrixAdditionRunTime, MatrixMultiplicationRunTime,
+    OPERATION_MODE_PARTIAL  = 1; # For Testing (Runs Fast)
+    OPERATION_MODE_FULL     = 2;
+
+    cRunTimeFunctions = [MatrixGenerationRunTime, MatrixAdditionRunTime, MatrixMultiplicationRunTime,
     MatrixQuadraticFormRunTime, MatrixReductionsRunTime, ElementWiseOperationsRunTime];
 
-  cFunctionString = ["Matrix Generation", "Matrix Addition", "Matrix Multiplication", "Matrix Quadratic Form",
-                    "Matrix Reductions", "Element Wise Operations"];
+    cFunctionString = ["Matrix Generation", "Matrix Addition", "Matrix Multiplication", "Matrix Quadratic Form",
+    "Matrix Reductions", "Element Wise Operations"];
 
-  if(operationMode == OPERATION_MODE_PARTIAL)
-    vMatrixSize = round(Int64, squeeze(readcsv("vMatrixSizePartial.csv"), 1));
-    numIterations = round(Int64, squeeze(readcsv("numIterationsPartial.csv"), 1));
-  elseif(operationMode == OPERATION_MODE_FULL)
-    vMatrixSize = round(Int64, squeeze(readcsv("vMatrixSizeFull.csv"), 1));
-    numIterations = round(Int64, squeeze(readcsv("numIterationsFull.csv"), 1));
-  end
-
-  numIterations = numIterations[1]; # It is 1x1 Array -> Scalar
-
-  mRunTime = zeros(length(vMatrixSize), length(cRunTimeFunctions), numIterations);
-
-  tic();
-  for ii = 1:length(vMatrixSize)
-    matrixSize = vMatrixSize[ii];
-    mX = randn(matrixSize, matrixSize);
-    mY = randn(matrixSize, matrixSize);
-    println("Matrix Size - $matrixSize");
-    for jj = 1:length(cRunTimeFunctions)
-      println("Processing $(cFunctionString[jj]) Matrix Size $matrixSize");
-      for kk = 1:numIterations
-        mA, mRunTime[ii, jj, kk] = cRunTimeFunctions[jj](matrixSize, mX, mY);
-      end
-      println("Finished Processing $(cFunctionString[jj])");
+    if(operationMode == OPERATION_MODE_PARTIAL)
+        vMatrixSize = round.(Int64, dropdims(DelimitedFiles.readdlm("vMatrixSizePartial.csv", ','), dims=1));
+        numIterations = round.(Int64, dropdims(DelimitedFiles.readdlm("numIterationsPartial.csv", ','), dims=1));
+    elseif(operationMode == OPERATION_MODE_FULL)
+        vMatrixSize = round.(Int64, dropdims(DelimitedFiles.readdlm("vMatrixSizeFull.csv", ','), dims=1));
+        numIterations = round.(Int64, dropdims(DelimitedFiles.readdlm("numIterationsFull.csv", ','), dims=1));
     end
-  end
-  totalRunTime = toq();
 
-  mRunTime = median(mRunTime, 3);
-  mRunTime = squeeze(mRunTime, 3);
+    numIterations = numIterations[1]; # It is 1x1 Array -> Scalar
 
-  println("Finished the Benchmark in $totalRunTime [Sec]");
+    mRunTime = zeros(length(vMatrixSize), length(cRunTimeFunctions), numIterations);
 
-  writecsv("RunTimeJulia0001.csv", mRunTime);
+    #bench=@benchmark begin
+    for ii = 1:length(vMatrixSize)
+        matrixSize = vMatrixSize[ii];
+        mX = randn(matrixSize, matrixSize);
+        mY = randn(matrixSize, matrixSize);
+        println("Matrix Size - $matrixSize");
+        for jj = 1:length(cRunTimeFunctions)
+            println("Processing $(cFunctionString[jj]) Matrix Size $matrixSize");
+            for kk = 1:numIterations
+                mA, mRunTime[ii, jj, kk] = cRunTimeFunctions[jj](matrixSize, mX, mY);
+            end
+            println("Finished Processing $(cFunctionString[jj])");
+        end
+    end
+    #end
+    #totalRunTime=minimum(bench.times)
 
-  return mRunTime;
+    #mRunTime = median(bench.times, 3);
+    #mRunTime = squeeze(mRunTime, 3);
+
+    #println("Finished the Benchmark in $totalRunTime [Sec]");
+
+    #writecsv("RunTimeJulia0001.csv", mRunTime);
+    return 0;
 
 end
 
 function MatrixGenerationRunTime( matrixSize, mX, mY )
 
-  tic();
-  mA = randn(matrixSize, matrixSize);
-  mB = rand(matrixSize, matrixSize);
-  runTime = toq();
-
-  mA = mA .+ mB;
-
-  return mA, runTime;
+    bench=@benchmark begin
+        mA = randn(matrixSize, matrixSize);
+        mB = rand(matrixSize, matrixSize);
+    end
+    runTime=minimum(bench.times)
+    return mA, runTime;
 end
 
 function MatrixAdditionRunTime( matrixSize, mX, mY )
 
-  sacalrA = rand();
-  sacalrB = rand();
+    sacalrA = rand();
+    sacalrB = rand();
 
-  tic();
-  mA = (sacalrA .* mX) .+ (sacalrB .* mY);
-  runTime = toq();
+    bench=@benchmark begin
+        mA = (sacalrA .* mX) .+ (sacalrB .* mY);
+    end
+    runTime=minimum(bench.times)
 
-  return mA, runTime;
+    return mA, runTime;
 end
 
 function MatrixMultiplicationRunTime( matrixSize, mX, mY )
 
-  sacalrA = rand();
-  sacalrB = rand();
+    sacalrA = rand();
+    sacalrB = rand();
 
-  tic();
-  mA = (sacalrA .+ mX) * (sacalrB .+ mY);
-  runTime = toq();
+    bench=@benchmark begin
+        mA = (sacalrA .+ mX) * (sacalrB .+ mY);
+    end
+    runTime=minimum(bench.times)
 
-  return mA, runTime;
+    return mA, runTime;
 end
 
 function MatrixQuadraticFormRunTime( matrixSize, mX, mY )
 
-  vX = randn(matrixSize);
-  vB = randn(matrixSize);
-  sacalrC = rand();
+    vX = randn(matrixSize);
+    vB = randn(matrixSize);
+    sacalrC = rand();
 
-  tic();
-  mA = ((mX * vX).' * (mX * vX)) .+ (vB.' * vX) .+ sacalrC;
-  runTime = toq();
+    bench=@benchmark begin
+        mA = (trnaspose(mX * vX) * (mX * vX)) .+ (transpose(vB) * vX) .+ sacalrC;
+    end
+    runTime=minimum(bench.times)
 
-  return mA, runTime;
+    return mA, runTime;
 end
 
 function MatrixReductionsRunTime( matrixSize, mX, mY )
 
-  tic();
-  mA = sum(mX, 1) .+ minimum(mY, 2); #Broadcasting
-  runTime = toq();
+    bench=@benchmark begin
+        mA = sum(mX, 1) .+ minimum(mY, 2); #Broadcasting
+    end
+    runTime=minimum(bench.times)
 
-  return mA, runTime;
+    return mA, runTime;
 end
 
 function ElementWiseOperationsRunTime( matrixSize, mX, mY )
 
-  mA = rand(matrixSize, matrixSize);
-  mB = 3 .+ rand(matrixSize, matrixSize);
-  mC = rand(matrixSize, matrixSize);
+    mA = rand(matrixSize, matrixSize);
+    mB = 3 .+ rand(matrixSize, matrixSize);
+    mC = rand(matrixSize, matrixSize);
 
-  tic();
-  mD = abs.(mA) .+ sin.(mB);
-  mE = exp.(-(mA .^ 2));
-  mF = (-mB .+ sqrt.((mB .^ 2) .- (4 .* mA .* mC))) ./ (2 .* mA);
-  runTime = toq();
+    bench=@benchmark begin
+        mD = abs.(mA) .+ sin.(mB);
+        mE = exp.(-(mA .^ 2));
+        mF = (-mB .+ sqrt.((mB .^ 2) .- (4 .* mA .* mC))) ./ (2 .* mA);
+    end
+    runTime=minimum(bench.times)
 
-  mA = mD .+ mE .+ mF;
+    mA = mD .+ mE .+ mF;
 
-  return mA, runTime;
+    return mA, runTime;
 end

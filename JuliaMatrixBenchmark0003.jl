@@ -88,8 +88,9 @@ function LeastSquaresRunTime( matrixSize, mX )
   vB = randn(matrixSize);
 
   tic();
-  vA = (mX.' * mX) \ (mX.' * vB);
-  mA = (mX.' * mX) \ (mX.' * mB);
+  mXT=transpose(mX);
+  vA = ( mXT * mX) \ ( mXT * vB);
+  mA = ( mXT * mX) \ ( mXT * mB);
   runTime = toq();
 
   mA = mA .+ vA;
@@ -102,7 +103,7 @@ function CalcDistanceMatrixRunTime( matrixSize, mX )
   mY = randn(matrixSize, matrixSize);
 
   tic();
-  mA = sum(mX .^ 2, 1).' .- (2 .* mX.' * mY) .+ sum(mY .^ 2, 1);
+  mA = transpose(sum(mX .^ 2, 1)) .- (2 .* transpose(mX) * mY) .+ sum(mY .^ 2, 1);
   runTime = toq();
 
   return mA, runTime;
@@ -120,7 +121,7 @@ function KMeansRunTime( matrixSize, mX )
   mA          = mX[:, randperm(matrixSize)[1:numClusters]]; #<! Cluster Centroids
 
   for ii = 1:numIterations
-    vMinDist, vClusterId[:] = findmin(sum(mA .^ 2, 1).' .- (2 .* mA.' * mX), 1); #<! Is there a `~` equivalent in Julia?
+    vMinDist, vClusterId[:] = findmin(transpose(sum(mA .^ 2, 1)) .- (2 .* transpose(mA)* mX), 1); #<! Is there a `~` equivalent in Julia?
     for jj = 1:numClusters
       mA[:, jj] = sum(mX[:, vClusterId .== jj], 2) ./ matrixSize;
     end
@@ -128,7 +129,7 @@ function KMeansRunTime( matrixSize, mX )
 
   runTime = toq();
 
-  mA = mA[:, 1] .+ mA[:, end].';
+  mA = mA[:, 1] .+ transpose(mA[:, end]);
 
   return mA;
 end

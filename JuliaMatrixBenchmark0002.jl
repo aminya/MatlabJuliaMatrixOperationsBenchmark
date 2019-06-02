@@ -79,7 +79,7 @@ end
 
 function MatrixSqrtRunTime( matrixSize, mX )
 
-  mY = mX.' * mX;
+  mY = transpose(mX) * mX;
 
   tic();
   mA = sqrtm(mY);
@@ -112,7 +112,7 @@ end
 
 function CholDecRunTime( matrixSize, mX )
 
-  mY = mX.' * mX;
+  mY = trnaspose(mX) * mX;
 
   tic();
   mA = chol(mY);
@@ -123,7 +123,7 @@ end
 
 function MatInvRunTime( matrixSize, mX )
 
-    mY = mX.' * mX;
+    mY = transpose(mX) * mX;
 
     tic();
     mA = inv(mY);

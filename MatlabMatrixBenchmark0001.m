@@ -104,8 +104,6 @@ mA = randn(matrixSize, matrixSize);
 mB = rand(matrixSize, matrixSize);
 runTime = toc();
 
-mA = mA + mB;
-
 
 end
 
