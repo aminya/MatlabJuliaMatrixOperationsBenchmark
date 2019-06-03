@@ -47,16 +47,16 @@ function JuliaMatrixBenchmark0001( operationMode = 2 )
 
 
     for ii = 1:length(vMatrixSize)
-        matrixSize = vMatrixSize[ii];
-        mX = randn(matrixSize, matrixSize);
-        mY = randn(matrixSize, matrixSize);
+        global matrixSize = vMatrixSize[ii];
+        global mX = randn(matrixSize, matrixSize);
+        global mY = randn(matrixSize, matrixSize);
         println("Matrix Size - $matrixSize");
 
         for jj = 1:length(cRunTimeFunctions)
             println("Processing $(cFunctionString[jj]) Matrix Size $matrixSize");
             for kk = 1:numIterations
                 # @bp
-                temp=cRunTimeFunctions[jj];
+                global temp=cRunTimeFunctions[jj];
                 benchijk =@benchmark temp(matrixSize, mX, mY);
                 mRunTime[ii, jj, kk]=minimum(benchijk.times);
             end
@@ -83,20 +83,20 @@ end
 
 function MatrixAdditionRunTime( matrixSize, mX, mY )
 
-    sacalrA = rand();
-    sacalrB = rand();
+    scalarA = rand();
+    scalarB = rand();
 
-    mA = (sacalrA .* mX) .+ (sacalrB .* mY);
+    mA = (scalarA .* mX) .+ (scalarB .* mY);
 
     return mA;
 end
 
 function MatrixMultiplicationRunTime( matrixSize, mX, mY )
 
-    sacalrA = rand();
-    sacalrB = rand();
+    scalarA = rand();
+    scalarB = rand();
 
-    mA = (sacalrA .+ mX) * (sacalrB .+ mY);
+    mA = (scalarA .+ mX) * (scalarB .+ mY);
 
     return mA;
 end
@@ -105,16 +105,16 @@ function MatrixQuadraticFormRunTime( matrixSize, mX, mY )
 
     vX = randn(matrixSize);
     vB = randn(matrixSize);
-    sacalrC = rand();
+    scalarC = rand();
 
-    mA = (trnaspose(mX * vX) * (mX * vX)) .+ (transpose(vB) * vX) .+ sacalrC;
+    mA = (transpose(mX * vX) * (mX * vX)) .+ (transpose(vB) * vX) .+ scalarC;
 
     return mA;
 end
 
 function MatrixReductionsRunTime( matrixSize, mX, mY )
 
-    mA = sum(mX, 1) .+ minimum(mY, 2); #Broadcasting
+    mA = sum(mX, dims=1) .+ minimum(mY, dims=2); #Broadcasting
 
     return mA;
 end
