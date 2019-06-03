@@ -11,11 +11,8 @@
 #       *   First release version.
 # ----------------------------------------------------------------------------------------------- #
 using DelimitedFiles
-
-# using Pkg
-# Pkg.add("BenchmarkTools")
-
 using BenchmarkTools
+# using JuliaInterpreter
 
   include("JuliaMatrixBenchmark0001.jl");
   #include("JuliaMatrixBenchmark0002.jl");
@@ -26,6 +23,8 @@ using BenchmarkTools
 
   operationMode = 1;
 
- JuliaMatrixBenchmark0001(operationMode);
+# @interpret JuliaMatrixBenchmark0001(operationMode)
+
+ mRunTime= JuliaMatrixBenchmark0001(operationMode);
  # mRunTime = JuliaMatrixBenchmark0002(operationMode);
   # mRunTime = JuliaMatrixBenchmark0003(operationMode);
