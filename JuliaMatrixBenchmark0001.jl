@@ -50,20 +50,19 @@ function JuliaMatrixBenchmark0001( operationMode = 2 )
         matrixSize = vMatrixSize[ii];
         mX = randn(matrixSize, matrixSize);
         mY = randn(matrixSize, matrixSize);
-        # println("Matrix Size - $matrixSize");
+        println("Matrix Size - $matrixSize");
 
-        jj=1;
-        # for jj = 1:length(cRunTimeFunctions)
-            # println("Processing $(cFunctionString[jj]) Matrix Size $matrixSize");
+        for jj = 1:length(cRunTimeFunctions)
+            println("Processing $(cFunctionString[jj]) Matrix Size $matrixSize");
             for kk = 1:numIterations
                 # @bp
-                temp=cRunTimeFunctions[jj]
+                temp=cRunTimeFunctions[jj];
                 benchijk =@benchmark temp(matrixSize, mX, mY);
                 mRunTime[ii, jj, kk]=minimum(benchijk.times);
             end
-            # println("Finished Processing $(cFunctionString[jj])");
+            println("Finished Processing $(cFunctionString[jj])");
 
-        # end
+        end
 
     end
 
