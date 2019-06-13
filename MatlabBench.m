@@ -47,15 +47,15 @@ for ii = 1:length(vMatrixSize)
         disp(['Processing ', num2str(cFunctionString{jj}), ' Matrix Size ', num2str(matrixSize)]);
         
         for kk = 1:numIterations
-            [mA, mRunTime(ii, jj, kk)] = cRunTimeFunctions{jj}(matrixSize, mX, mY);
-        end
+            
+            fun=@() cRunTimeFunctions{jj}(matrixSize, mX, mY);
+            mRunTime(ii, jj, kk) = timeit(fun); % computes median of bench times
         
+        end
     end
 end
 
-% mRunTime = median(mRunTime, 3);
-% disp(['Finished the Benchmark in ', num2str(totalRunTime), ' [Sec]']);
-% runTimeFilePath = fullfile(RUN_TIME_DATA_FOLDER, RUN_TIME_FILE_NAME);
+runTimeFilePath = fullfile(RUN_TIME_DATA_FOLDER, RUN_TIME_FILE_NAME);
 
 mRunTimeBase = 0;
 if(exist(runTimeFilePath, 'file'))
