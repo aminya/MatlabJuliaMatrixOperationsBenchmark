@@ -13,7 +13,7 @@ Release Notes:
 		* Removed rounds because readdlim supports converting to int64 itself
 		* Changed deprecated squeeze to droplims
 		* jj for loop changed to be like fun in allFunctions. This allows simply adjusting allFunctions array if want to remove some functions from benchmark
-		* Added dims= to minimum and maximum functions
+		* Added dims= to 2nd input argument of minimum(), maximum(), and sum() functions
 		* Added dummy mY to functions that don't use it. (for consistency in code logic)
 		* Changed deprecated expm with exp
 		* Changed deprecated sqrtm with sqrt
@@ -99,7 +99,7 @@ Old changelog:
 #       *   First release version.
 # ----------------------------------------------------------------------------------------------- #
 # ----------------------------------------------------------------------------------------------- #
-# Julia Matrix Operations Benchmark - Test Suite 0001
+# Julia Optimized Matrix Operations Benchmark - Test Suite 0001
 # Reference:
 #   1. C.
 # Remarks:
@@ -123,7 +123,7 @@ Old changelog:
 #       *   First release version.
 # ----------------------------------------------------------------------------------------------- #
 # ----------------------------------------------------------------------------------------------- #
-# Julia Matrix Operations Benchmark - Test Suite 0002
+# Julia Optimized Matrix Operations Benchmark - Test Suite 0002
 # Reference:
 #   1. C.
 # Remarks:
@@ -143,7 +143,7 @@ Old changelog:
 #       *   First release version.
 # ----------------------------------------------------------------------------------------------- #
 # ----------------------------------------------------------------------------------------------- #
-# Julia Matrix Operations Benchmark - Test Suite 0003
+# Julia Optimized Matrix Operations Benchmark - Test Suite 0003
 # Reference:
 #   1. C.
 # Remarks:

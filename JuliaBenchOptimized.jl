@@ -2,27 +2,32 @@
 
 function JuliaMatrixBenchmarkOpt0001( operationMode = 2 )
 
-  allFunctions = [MatrixGeneration, MatrixAddition, MatrixMultiplication, MatrixQuadraticForm, MatrixReductions, ElementWiseOperations, MatrixExp, MatrixSqrt, Svd, Eig, CholDec, MatInv, LinearSystem, LeastSquares];
+  allFunctions = [MatrixGeneration, MatrixAddition, MatrixMultiplication, MatrixQuadraticForm, MatrixReductions, ElementWiseOperations, MatrixExp, MatrixSqrt, Svd, Eig, CholDec, MatInv, LinearSystem, LeastSquares, CalcDistanceMatrix, KMeans];
 
-  # need tweaking:
-  # , CalcDistanceMatrix, KMeans
 
   allFunctionsString = ["Matrix Generation", "Matrix Addition", "Matrix Multiplication", "Matrix Quadratic Form", "Matrix Reductions", "Element Wise Operations", "Matrix Exponential", "Matrix Square Root", "Singular Value Decomposition", "Eigen Decomposition","Cholesky Decomposition", "Matrix Inversion", "Linear System Solution", "Linear Least Squares", "Squared Distance Matrix", "K-Means"];
 
-  if(operationMode == 1) # partial fast benchmark
+  if (operationMode == 1) # partial benchmark
     vMatrixSize =  dropdims(DelimitedFiles.readdlm("vMatrixSizePartial.csv", ',',Int64), dims=1);
     numIterations = dropdims(DelimitedFiles.readdlm("numIterationsPartial.csv", ',',Int64), dims=1);
 
-  elseif(operationMode == 2) # full fast benchmark
+  elseif (operationMode == 2) # full benchmark
     vMatrixSize = dropdims(readdlm("vMatrixSizeFull.csv", ',',Int64), dims=1);
     numIterations =  dropdims(readdlm("numIterationsFull.csv", ',',Int64), dims=1);
+
+  elseif (operationMode == 0) # Test benchmark
+    vMatrixSize = 2;
+    numIterations =  1;
 
   end
 
   numIterations = numIterations[1]; # It is 1x1 Array -> Scalar
 
   mRunTime = zeros(length(vMatrixSize), length(allFunctions), numIterations);
+  tRunTime= Array{Any}(undef,length(mRunTime)+1,3)# a table containing all the information
+  tRunTime[1,:]=["Function Name","Matrix Size","Run Time"];
 
+  rr=2; # row counter for table
 
   for ii = 1:length(vMatrixSize)
     matrixSize = vMatrixSize[ii];
@@ -34,20 +39,23 @@ function JuliaMatrixBenchmarkOpt0001( operationMode = 2 )
     for fun in allFunctions
       println("Processing $(allFunctionsString[jj]) - MatrixSize= $matrixSize");
 
-      for kk = 1:numIterations
+      for kk = 1:numIterations;
 
-        benchijk =@benchmark $fun($matrixSize, $mX, $mY);
-        mRunTime[ii, jj, kk]=minimum(benchijk.times);
+        benchIJK =@benchmark $fun($matrixSize, $mX, $mY);
 
+        mRunTime[ii, jj, kk]=median(benchIJK.times);
+        tRunTime[rr,:]=["$(allFunctionsString[jj])","$matrixSize",mRunTime[ii, jj, kk]];
+
+        rr+=1;
       end
       jj+=1;
     end
 
   end
+  writedlm("RunTimeJuliaTable.csv", tRunTime,',');
+  writedlm("RunTimeJulia.csv", mRunTime,',');
 
-  writedlm("RunTimeJuliaOptimized001.csv", mRunTime);
-
-  return mRunTime;
+  return tRunTime;
 end
 
 function MatrixGeneration( matrixSize, mX, mY )
@@ -101,7 +109,7 @@ end
 
 function MatrixReductions( matrixSize, mX, mY )
 
-  mA = sum(mX, 1) .+ minimum(mY, 2); #Broadcasting
+  mA = sum(mX, dims=1) .+ minimum(mY, dims=2); #Broadcasting
 
   return mA;
 end
@@ -154,27 +162,25 @@ end
 
 function Svd( matrixSize, mX, mY )
 
-  mU, mS, mV = svd(mX, thin = false);
+  F = svd(mX, full = false); # F is SVD object
+  mU, mS, mV = F;
 
-  mA = mU .+ mS .+ mV;
-
-  return mA;
+  return mA=0;
 end
 
 function Eig( matrixSize, mX, mY )
 
-  mD, mV = eig(mX);
+  F  = eigen(mX); # F is eigen object
+  mD, mV = F;
 
-  mA = mD .+ mV;
-
-  return mA;
+  return mA=0;
 end
 
 function CholDec( matrixSize, mX, mY )
 
   mY = transpose(mX) * mX;
 
-  mA = chol(mY);
+  mA = cholesky(mY);
 
   return mA;
 end
@@ -221,7 +227,7 @@ function CalcDistanceMatrix( matrixSize, mX, mY )
 
   mY = randn(matrixSize, matrixSize);
 
-  mA = transpose(sum(mX .^ 2, 1)) .- (2 .* transpose(mX) * mY) .+ sum(mY .^ 2, 1);
+  mA = transpose(sum(mX .^ 2, dims=1)) .- (2 .* transpose(mX) * mY) .+ sum(mY .^ 2, dims=1);
 
   return mA;
 end
@@ -229,17 +235,17 @@ end
 function KMeans( matrixSize, mX, mY )
 
   # Assuming Samples are slong Columns (Rows are features)
-  numClusters     = Int64(max(round(matrixSize / 100), 1));
-  vClusterId      = zeros(matrixSize);
+  numClusters     = Int64( max( round(matrixSize / 100), 1 ) ); # % max between 1 and round(...)
   numIterations   = 10;
 
   # http://stackoverflow.com/questions/36047516/julia-generating-unique-random-integer-array
   mA          = mX[:, randperm(matrixSize)[1:numClusters]]; #<! Cluster Centroids
 
   for ii = 1:numIterations
-    vMinDist, vClusterId[:] = findmin(sum(mA .^ 2, 1).' .- (2 .* transpose(mA) * mX), 1); #<! Is there a `~` equivalent in Julia?
+    vMinDist, vClusterId = findmin( transpose(sum(mA .^ 2, 1)) .- (2 .* transpose(mA) * mX), dims=1); #<! Is there a `~` equivalent in Julia?
+    vClusterId=dropdims(mClusterId, dims=1); # to be able to access it later
     for jj = 1:numClusters
-      mA[:, jj] = sum(mX[:, vClusterId .== jj], 2) ./ sum(vClusterId .== jj);
+      mA[:, jj] = sum(mX[:, vClusterId .== jj], dims=2) ./ sum(vClusterId .== jj);
     end
   end
 
