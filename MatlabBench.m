@@ -1,12 +1,4 @@
-function [ mRunTime ] = MatlabBench( operationMode, vTestIdx )
-
-FALSE   = 0;
-TRUE    = 1;
-OFF     = 0;
-ON      = 1;
-
-RUN_TIME_DATA_FOLDER    = 'RunTimeData';
-RUN_TIME_FILE_NAME      = 'RunTimeMatlab.csv';
+function [ tRunTime ] = MatlabBench( operationMode )
 
 cRunTimeFunctionsBase = {@MatrixGeneration, @MatrixAddition,@MatrixMultiplication,...
     @MatrixQuadraticForm, @MatrixReductions, @ElementWiseOperations, @MatrixExp,...
@@ -19,27 +11,27 @@ cFunctionStringBase = {'Matrix Generation', 'Matrix Addition', 'Matrix Multiplic
     'Cholesky Decomposition', 'Matrix Inversion','Linear System Solution',...
     'Linear Least Squares', 'Squared Distance Matrix', 'K-Means Run Time'};
 
-numTests = length(cRunTimeFunctionsBase);
+numFun = length(cRunTimeFunctionsBase);
 
-if(operationMode == 1)
+if(operationMode == 1)     % Partial Benchmark
     vMatrixSize = csvread('vMatrixSizePartial.csv');
     numIterations = csvread('numIterationsPartial.csv');
-elseif(operationMode == 2)
+elseif(operationMode == 2) % Full Benchmark
     vMatrixSize = csvread('vMatrixSizeFull.csv');
     numIterations = csvread('numIterationsFull.csv');
-elseif(operationMode == 0) # Test benchmark
+elseif(operationMode == 0) % Test Benchmark
     vMatrixSize = 2;
     numIterations =  1;
 end
 
+vTestIdx=1:numFun; % change this to do different tests
 cRunTimeFunctions = cRunTimeFunctionsBase(vTestIdx);
 cFunctionString = cFunctionStringBase(vTestIdx);
 
 mRunTime = zeros(length(vMatrixSize), length(cRunTimeFunctions), numIterations);
-tRunTime= cell(length(mRunTime)+1,3)# a table containing all the information
-tRunTime{1,1}="Function Name"; tRunTime{1,2}="Matrix Size"; tRunTime{1,3}="Run Time";
+tRunTime= cell(length(mRunTime),3); % a table containing all the information
 
-rr=2; # row counter for table
+rr=1; % row counter for table
 for ii = 1:length(vMatrixSize)
     matrixSize = vMatrixSize(ii);
     mX = randn(matrixSize, matrixSize);
@@ -53,29 +45,17 @@ for ii = 1:length(vMatrixSize)
 
             fun=@() cRunTimeFunctions{jj}(matrixSize, mX, mY);
             mRunTime(ii, jj, kk) = timeit(fun); % computes median of bench times
-            tRunTime{1,1}=num2str(cFunctionString{jj}); tRunTime{1,2}=num2str(matrixSize); tRunTime{1,3}=mRunTime(ii, jj, kk);
+            tRunTime{rr,1}=num2str(cFunctionString{jj}); tRunTime{rr,2}=num2str(matrixSize); tRunTime{rr,3}=mRunTime(ii, jj, kk);
+            
+            rr=rr+1;
         end
     end
 end
 
-runTimeFilePath = fullfile(RUN_TIME_DATA_FOLDER, RUN_TIME_FILE_NAME);
+t=cell2table(tRunTime,'VariableName',{'FunctionName','MatrixSize','RunTime'});
+writetable(t,fullfile('RunTimeData', 'RunTimeMatlabTable.csv'));
 
-mRunTimeBase = 0;
-if(exist(runTimeFilePath, 'file'))
-    mRunTimeBase = csvread(runTimeFilePath);
-end
-
-if(any(size(mRunTimeBase) ~= [length(vMatrixSize), numTests]))
-    % Previous Data has incompatible dimensions
-    mRunTimeBase = zeros([length(vMatrixSize), numTests]);
-end
-
-mRunTimeBase(:, vTestIdx) = mRunTime;
-
-if(operationMode == OPERATION_MODE_FULL)
-    csvwrite(runTimeFilePath, mRunTimeBase);
-end
-
+csvwrite(fullfile('RunTimeData', 'RunTimeMatlab.csv'),mRunTime)
 
 end
 

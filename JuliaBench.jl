@@ -24,7 +24,7 @@ function JuliaBench(operationMode)
 
     mRunTime = zeros(length(vMatrixSize), length(allFunctions), numIterations);
     tRunTime= Array{Any}(undef,length(mRunTime)+1,3)# a table containing all the information
-    tRunTime[1,:]=["Function Name","Matrix Size","Run Time"];
+    tRunTime[1,:]=["FunctionName","MatrixSize","RunTime"];
 
     rr=2; # row counter for table
 
