@@ -2,6 +2,7 @@
 
 ## Updated by Amin Yahyaabadi:
    * Julia language used is updated to V 1.1.1
+   * Better benchmarking tools are used both in Julia and MATLAB
    * Many changes and updates are made. For more details refer to changelog files that are included.
 
 This is a small benchmark of some common Matrix Operations (Linear Algebra Oriented).  
@@ -210,7 +211,7 @@ MatlabMain
 
 ## ToDo
  * Check if Julia code is efficient.
- * Add Python (NumPy).
+ * Add Python (NumPy): Code has been converted from MATLAB to python using smop. Still needs working https://github.com/aminya/smop
  * Add Octave.
  * Add more tests (Some real world algorithms)
      * Orthogonal Matching Pursuit.
