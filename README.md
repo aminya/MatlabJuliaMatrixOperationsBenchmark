@@ -170,7 +170,7 @@ Running 10 iterations of the K-Means Algorithm.
     * BLAS Version (`version -blas`) - `Intel(R) Math Kernel Library Version 2018.0.1 Product Build 20171007 for Intel(R) 64 architecture applications, CNR branch AVX2`
     * LAPACK Version (`version -lapack`) - `Intel(R) Math Kernel Library Version 2018.0.1 Product Build 20171007 for Intel(R) 64 architecture applications CNR branch AVX2  Linear Algebra PACKage Version 3.7.0`
     
- * Julia 1.1.1 + https://github.com/JuliaComputing/MKL.jl.
+ * Julia 1.1.1 + MKL.
      * Julia Version (`versioninfo()`) - `Julia Version 1.1.1 Commit 55e36cc308 (2019-05-16 04:10 UTC)`;
      * BLAS Version - `BLAS: Intel MKL `. https://github.com/JuliaComputing/MKL.jl
      * LAPACK Version - `libopenblas64_`.
