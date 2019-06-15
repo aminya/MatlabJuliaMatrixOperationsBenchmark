@@ -167,8 +167,9 @@ Running 10 iterations of the K-Means Algorithm.
  * CPU - Intel(R) Core(TM) i5-8250U @ 1.6 [GHz] 1800 Mhz, 4 Cores, 8 Logical Processors.
  * Memory - 1x8GB DDR4 2400MHz Non-ECC 
  * MATLAB R2018b.
-    * BLAS Version (`version -blas`) - `Intel(R) Math Kernel Library Version 11.3.1 Product Build 20151021 for Intel(R) 64 architecture applications, CNR branch AVX2`.
-    * LAPACK Version (`cersion -lapack`) - `Intel(R) Math Kernel Library Version 11.3.1 Product Build 20151021 for Intel(R) 64 architecture applications, CNR branch AVX2; Linear Algebra PACKage Version 3.5.0`.
+    * BLAS Version (`version -blas`) - `Intel(R) Math Kernel Library Version 2018.0.1 Product Build 20171007 for Intel(R) 64 architecture applications, CNR branch AVX2`
+    * LAPACK Version (`version -lapack`) - `Intel(R) Math Kernel Library Version 2018.0.1 Product Build 20171007 for Intel(R) 64 architecture applications CNR branch AVX2  Linear Algebra PACKage Version 3.7.0`
+    
  * Julia Pro 1.1.1.
      * Julia Version (`versioninfo()`) - `Julia Version 1.1.1 Commit 55e36cc308 (2019-05-16 04:10 UTC)`;
      * BLAS Version - `BLAS: Intel MKL `. https://github.com/JuliaComputing/MKL.jl
