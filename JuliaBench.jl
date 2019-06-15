@@ -1,232 +1,233 @@
 
 function JuliaBench(operationMode)
 
-    allFunctions = [MatrixGeneration, MatrixAddition, MatrixMultiplication, MatrixQuadraticForm, MatrixReductions, ElementWiseOperations, MatrixExp, MatrixSqrt, Svd, Eig, CholDec, MatInv, LinearSystem, LeastSquares, CalcDistanceMatrix, KMeans];
+	allFunctions = [MatrixGeneration, MatrixAddition, MatrixMultiplication, MatrixQuadraticForm, MatrixReductions, ElementWiseOperations, MatrixExp, MatrixSqrt, Svd, Eig, CholDec, MatInv, LinearSystem, LeastSquares, CalcDistanceMatrix, KMeans];
 
 
-    allFunctionsString = ["Matrix Generation", "Matrix Addition", "Matrix Multiplication", "Matrix Quadratic Form", "Matrix Reductions", "Element Wise Operations", "Matrix Exponential", "Matrix Square Root", "Singular Value Decomposition", "Eigen Decomposition","Cholesky Decomposition", "Matrix Inversion", "Linear System Solution", "Linear Least Squares", "Squared Distance Matrix", "K-Means"];
+	allFunctionsString = ["Matrix Generation", "Matrix Addition", "Matrix Multiplication", "Matrix Quadratic Form", "Matrix Reductions", "Element Wise Operations", "Matrix Exponential", "Matrix Square Root", "Singular Value Decomposition", "Eigen Decomposition","Cholesky Decomposition", "Matrix Inversion", "Linear System Solution", "Linear Least Squares", "Squared Distance Matrix", "K-Means"];
 
-    if (operationMode == 1) # partial benchmark
-        vMatrixSize =  dropdims(DelimitedFiles.readdlm("vMatrixSizePartial.csv", ',',Int64), dims=1);
-        numIterations = dropdims(DelimitedFiles.readdlm("numIterationsPartial.csv", ',',Int64), dims=1);
+	if (operationMode == 1) # partial benchmark
+		vMatrixSize =  dropdims(DelimitedFiles.readdlm("Inputs\\vMatrixSizePartial.csv", ',',Int64), dims=1);
+		numIterations = dropdims(DelimitedFiles.readdlm("Inputs\\numIterationsPartial.csv", ',',Int64), dims=1);
 
-    elseif (operationMode == 2) # full benchmark
-        vMatrixSize = dropdims(readdlm("vMatrixSizeFull.csv", ',',Int64), dims=1);
-        numIterations =  dropdims(readdlm("numIterationsFull.csv", ',',Int64), dims=1);
+	elseif (operationMode == 2) # full benchmark
+		vMatrixSize = dropdims(readdlm("Inputs\\vMatrixSizeFull.csv", ',',Int64), dims=1);
+		numIterations =  dropdims(readdlm("Inputs\\numIterationsFull.csv", ',',Int64), dims=1);
 
-    elseif (operationMode == 0) # Test benchmark
-        vMatrixSize = 2;
-        numIterations =  1;
+	elseif (operationMode == 0) # Test benchmark
+		vMatrixSize = 2;
+		numIterations =  1;
+		
+	end
 
-    end
+	numIterations = numIterations[1]; # It is 1x1 Array -> Scalar
 
-    numIterations = numIterations[1]; # It is 1x1 Array -> Scalar
+	mRunTime = zeros(length(vMatrixSize), length(allFunctions), numIterations);
+	tRunTime= Array{Any}(undef,length(allFunctions)+1,length(vMatrixSize)+1)# a table containing all the information
+	tRunTime[1,1]="FunctionName\\MatrixSize";
 
-    mRunTime = zeros(length(vMatrixSize), length(allFunctions), numIterations);
-    tRunTime= Array{Any}(undef,length(mRunTime)+1,3)# a table containing all the information
-    tRunTime[1,:]=["FunctionName","MatrixSize","RunTime"];
+	for ii = 1:length(vMatrixSize)
+		matrixSize = vMatrixSize[ii];
+		mX = randn(matrixSize, matrixSize);
+		mY = randn(matrixSize, matrixSize);
+		println("Matrix Size - $matrixSize");
 
-    rr=2; # row counter for table
+		jj=1;
+		for fun in allFunctions
+			println("Processing $(allFunctionsString[jj]) - MatrixSize= $matrixSize");
 
-    for ii = 1:length(vMatrixSize)
-        matrixSize = vMatrixSize[ii];
-        mX = randn(matrixSize, matrixSize);
-        mY = randn(matrixSize, matrixSize);
-        println("Matrix Size - $matrixSize");
+			for kk = 1:numIterations;
 
-        jj=1;
-        for fun in allFunctions
-            println("Processing $(allFunctionsString[jj]) - MatrixSize= $matrixSize");
+				benchIJK =@benchmark $fun($matrixSize, $mX, $mY)
+				# t =@benchmarkable $fun($matrixSize, $mX, $mY);
+				# tune!(t)
+				# run(t)
 
-            for kk = 1:numIterations;
+				mRunTime[ii, jj, kk]=median(benchIJK).time/1e3;
+				# println("$(mRunTime[ii, jj, kk])")
 
-                benchIJK =@benchmark $fun($matrixSize, $mX, $mY);
+			end
+			tRunTime[jj+1,1]="$(allFunctionsString[jj])";
+			tRunTime[1,ii+1]="$matrixSize";
+			tRunTime[jj+1,ii+1]=mean(mRunTime[ii, jj,:]);
+			jj+=1;
+		end
 
-                mRunTime[ii, jj, kk]=median(benchIJK.times);
-                tRunTime[rr,:]=["$(allFunctionsString[jj])","$matrixSize",mRunTime[ii, jj, kk]];
+	end
 
-                rr+=1;
-            end
-            jj+=1;
-        end
-
-    end
-    writedlm("RunTimeJuliaTable.csv", tRunTime,',');
-    writedlm("RunTimeJulia.csv", mRunTime,',');
-
-    return tRunTime;
+	return tRunTime, mRunTime;
 end
 
 function MatrixGeneration( matrixSize, mX, mY )
 
-    mA = randn(matrixSize, matrixSize);
-    mB = rand(matrixSize, matrixSize);
+	mA = randn(matrixSize, matrixSize);
+	mB = rand(matrixSize, matrixSize);
 
-    return mA;
+	return mA;
 end
 
 function MatrixAddition( matrixSize, mX, mY )
 
-    scalarA = rand();
-    scalarB = rand();
+	scalarA = rand();
+	scalarB = rand();
 
-    mA = (scalarA .* mX) .+ (scalarB .* mY);
+	mA = (scalarA .* mX) .+ (scalarB .* mY);
 
-    return mA;
+	return mA;
 end
 
 function MatrixMultiplication( matrixSize, mX, mY )
 
-    scalarA = rand();
-    scalarB = rand();
+	scalarA = rand();
+	scalarB = rand();
 
-    mA = (scalarA .+ mX) * (scalarB .+ mY);
+	mA = (scalarA .+ mX) * (scalarB .+ mY);
 
-    return mA;
+	return mA;
 end
 
 function MatrixQuadraticForm( matrixSize, mX, mY )
 
-    vX = randn(matrixSize);
-    vB = randn(matrixSize);
-    scalarC = rand();
+	vX = randn(matrixSize);
+	vB = randn(matrixSize);
+	scalarC = rand();
 
-    mA = (transpose(mX * vX) * (mX * vX)) .+ (transpose(vB) * vX) .+ scalarC;
+	mA = (transpose(mX * vX) * (mX * vX)) .+ (transpose(vB) * vX) .+ scalarC;
 
-    return mA;
+	return mA;
 end
 
 function MatrixReductions( matrixSize, mX, mY )
 
-    mA = sum(mX, dims=1) .+ minimum(mY, dims=2); #Broadcasting
+	mA = sum(mX, dims=1) .+ minimum(mY, dims=2); #Broadcasting
 
-    return mA;
+	return mA;
 end
 
 function ElementWiseOperations( matrixSize, mX, mY )
 
-    mA = rand(matrixSize, matrixSize);
-    mB = 3 .+ rand(matrixSize, matrixSize);
-    mC = rand(matrixSize, matrixSize);
+	mA = rand(matrixSize, matrixSize);
+	mB = 3 .+ rand(matrixSize, matrixSize);
+	mC = rand(matrixSize, matrixSize);
 
-    mD = abs.(mA) .+ sin.(mB);
-    mE = exp.(-(mA .^ 2));
-    mF = (-mB .+ sqrt.((mB .^ 2) .- (4 .* mA .* mC))) ./ (2 .* mA);
+	mD = abs.(mA) .+ sin.(mB);
+	mE = exp.(-(mA .^ 2));
+	mF = (-mB .+ sqrt.((mB .^ 2) .- (4 .* mA .* mC))) ./ (2 .* mA);
 
-    mA = mD .+ mE .+ mF;
+	mA = mD .+ mE .+ mF;
 
-    return mA;
+	return mA;
 end
 
 function MatrixExp( matrixSize, mX, mY )
 
-    mA = exp(mX);
+	mA = exp(mX);
 
-    return mA;
+	return mA;
 end
 
 function MatrixSqrt( matrixSize, mX, mY )
 
-    mY = transpose(mX) * mX;
+	mY = transpose(mX) * mX;
 
-    mA = sqrt(mY);
+	mA = sqrt(mY);
 
-    return mA;
+	return mA;
 end
 
 function Svd( matrixSize, mX, mY )
 
-    F = svd(mX, full = false); # F is SVD object
-    mU, mS, mV = F;
+	F = svd(mX, full = false); # F is SVD object
+	mU, mS, mV = F;
 
-    return mA=0;
+	return mA=0;
 end
 
 function Eig( matrixSize, mX, mY )
 
-    F  = eigen(mX); # F is eigen object
-    mD, mV = F;
+	F  = eigen(mX); # F is eigen object
+	mD, mV = F;
 
-    return mA=0;
+	return mA=0;
 end
 
 function CholDec( matrixSize, mX, mY )
 
-    mY = transpose(mX) * mX;
+	mY = transpose(mX) * mX;
 
-    mA = cholesky(mY);
+	mA = cholesky(mY);
 
-    return mA;
+	return mA;
 end
 
 function MatInv( matrixSize, mX, mY )
 
-    mY = transpose(mX) * mX;
+	mY = transpose(mX) * mX;
 
-    mA = inv(mY);
-    mB = pinv(mX);
+	mA = inv(mY);
+	mB = pinv(mX);
 
-    mA = mA .+ mB;
+	mA = mA .+ mB;
 
-    return mA;
+	return mA;
 end
 
 
 function LinearSystem( matrixSize, mX, mY )
 
-    mB = randn(matrixSize, matrixSize);
-    vB = randn(matrixSize);
+	mB = randn(matrixSize, matrixSize);
+	vB = randn(matrixSize);
 
-    vA = mX \ vB;
-    mA = mX \ mB;
+	vA = mX \ vB;
+	mA = mX \ mB;
 
-    mA = mA .+ vA;
+	mA = mA .+ vA;
 
-    return mA;
+	return mA;
 end
 
 function LeastSquares( matrixSize, mX, mY )
 
-    mB = randn(matrixSize, matrixSize);
-    vB = randn(matrixSize);
+	mB = randn(matrixSize, matrixSize);
+	vB = randn(matrixSize);
 
-    mXT=transpose(mX);
-    vA = ( mXT * mX) \ ( mXT * vB);
-    mA = ( mXT * mX) \ ( mXT * mB);
+	mXT=transpose(mX);
+	vA = ( mXT * mX) \ ( mXT * vB);
+	mA = ( mXT * mX) \ ( mXT * mB);
 
-    mA = mA .+ vA;
+	mA = mA .+ vA;
 
-    return mA;
+	return mA;
 end
 
 function CalcDistanceMatrix( matrixSize, mX, mY )
 
-    mY = randn(matrixSize, matrixSize);
+	mY = randn(matrixSize, matrixSize);
 
-    mA = transpose( sum(mX .^ 2, dims=1) ) .- (2 .* transpose(mX) * mY) .+ sum(mY .^ 2, dims=1);
+	mA = transpose( sum(mX .^ 2, dims=1) ) .- (2 .* transpose(mX) * mY) .+ sum(mY .^ 2, dims=1);
 
-    return mA;
+	return mA;
 end
 
 function KMeans( matrixSize, mX, mY )
 
-    # Assuming Samples are slong Columns (Rows are features)
-    numClusters     = Int64( max( round(matrixSize / 100), 1 ) ); # % max between 1 and round(...)
-    numIterations   = 100;
+	# Assuming Samples are slong Columns (Rows are features)
+	numClusters  = Int64( max( round(matrixSize / 100), 1 ) ); # % max between 1 and round(...)
+	numIterations = 10;
 
-    # http://stackoverflow.com/questions/36047516/julia-generating-unique-random-integer-array
-    mA          = mX[:, randperm(matrixSize)[1:numClusters]]; #<! Cluster Centroids
+	# http://stackoverflow.com/questions/36047516/julia-generating-unique-random-integer-array
+	mA = mX[:, randperm(matrixSize)[1:numClusters]]; #<! Cluster Centroids
 
-    for ii = 1:numIterations
-        vMinDist, mClusterId = findmin( transpose(sum(mA .^ 2, dims=1)) .- (2 .* transpose(mA)* mX), dims=1); #<! Is there a `~` equivalent in Julia?
-        vClusterId=dropdims(mClusterId, dims=1); # to be able to access it later
+	for ii = 1:numIterations
+		vMinDist, mClusterId = findmin( transpose(sum(mA .^ 2, dims=1)) .- (2 .* transpose(mA)* mX), dims=1); #<! Is there a `~` equivalent in Julia?
+		vClusterId = LinearIndices( dropdims(mClusterId, dims=1) ); # to be able to access it later
 
-        for jj = 1:numClusters
-            mA[:, jj] = sum( mX[:, vClusterId .== jj ], dims=2 ) ./ matrixSize;
-        end
-    end
+		for jj = 1:numClusters
+			mA[:, jj] = mean( mX[:, vClusterId .== jj ], dims=2 );
+		end
+	end
 
-    mA = mA[:, 1] .+ transpose(mA[:, end]);
+	mA = mA[:, 1] .+ transpose(mA[:, end]);
 
-    return mA;
+	return mA;
 end

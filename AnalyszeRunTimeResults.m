@@ -1,100 +1,56 @@
-% ----------------------------------------------------------------------------------------------- %
-% Analyze MATLAB & Julia Run Time Results
-% Reference:
-%   1. C.
-% Remarks:
-%   1.  W.
-% TODO:
-%   1.  A
-%   Release Notes:
-%   -   1.0.001     11/02/2017  Royi Avital
-%       *   Added support for Julia Optimized.
-%       *   Saving figures into Figures sub folder.
-%   -   1.0.000     09/02/2017  Royi Avital
-%       *   First release version.
-% ----------------------------------------------------------------------------------------------- %
-
 %% Setting Enviorment Parameters
 
-run('InitScript.m');
+InitScript;
 
-RUN_TIME_DATA_FOLDER = 'RunTimeData\';
-
-MATLAB_IDX  = 1;
-JULIA_IDX   = 2;
-
-MATLAB_RUN_TIME_FILE_NAME       = 'RunTimeMatlab.csv';
-JULIA_RUN_TIME_FILE_NAME        = 'RunTimeJulia.csv';
-JULIA_OPT_RUN_TIME_FILE_NAME    = 'RunTimeJuliaOpt.csv';
-
-cLegendString = {'MATLAB', 'Julia', 'Julia Optimized'};
-
-figureIdx           = 0;
 figureCounterSpec   = '%04d';
 
-vMatrixSize = csvread('vMatrixSizeFull.csv');
-cFunctionString = {'Matrix Generation','Matrix Addition','Matrix Multiplication',...
-    'Matrix Quadratic Form', 'Matrix Reductions', 'Element Wise Operations',...
-    'Matrix Exponential', 'Matrix Square Root', 'SVD','Eigen Decomposition',...
-    'Cholesky Decomposition', 'Matrix Inversion','Linear System Solution',...
-    'Linear Least Squares', 'Squared Distance Matrix', 'K-Means'};
-
-
-
-%% Setting Parameters
-
-generateImages = ON;
-
+generateImages=1;
 
 %% Loading Data
 
-mRunTimeMatlab      = csvread([RUN_TIME_DATA_FOLDER, MATLAB_RUN_TIME_FILE_NAME]);
-mRunTimeJulia       = csvread([RUN_TIME_DATA_FOLDER, JULIA_RUN_TIME_FILE_NAME]);
-mRunTimeJuliaOpt    = csvread([RUN_TIME_DATA_FOLDER, JULIA_OPT_RUN_TIME_FILE_NAME]);
+tRunTimeMatlab = readtable(fullfile('RunTimeData\', 'RunTimeMatlabTable.csv'));
+mRunTimeMatlab=table2array(tRunTimeMatlab(2:end,2:end));
+vMatrixSizeMatlab=table2array(tRunTimeMatlab(1,2:end));
+sFunNameMatlab=table2array(tRunTimeMatlab(2:end,1));
 
-numTests    = length(cFunctionString);
-numMatSize  = length(vMatrixSize);
+tRunTimeJuliamkl = readtable(fullfile('RunTimeData\', 'RunTimeJuliamklTable.csv'));
+mRunTimeJuliamkl=table2array(tRunTimeJuliamkl(2:end,2:end));
+vMatrixSizeJuliamkl=table2array(tRunTimeJuliamkl(1,2:end));
+sFunNameJuliamkl=table2array(tRunTimeJuliamkl(2:end,1));
 
-if(any(size(mRunTimeMatlab) ~= size(mRunTimeJulia)))
-    error('Run Time Data Dimensions Don''t Match');
-end
-
-if(any(size(mRunTimeMatlab) ~= size(mRunTimeJuliaOpt)))
-    error('Run Time Data Dimensions Don''t Match');
-end
-
-if(size(mRunTimeMatlab, 2) ~= numTests)
-    error('Run Time Data Has Incompatible Number of Tests');
-end
-
-if(size(mRunTimeMatlab, 1) ~= numMatSize)
-    error('Run Time Data Has Incompatible Number of Matrix Size');
-end
-
+tRunTimeJuliamklSIMD = readtable(fullfile('RunTimeData\', 'RunTimeJuliamklSIMDTable.csv'));
+mRunTimeJuliamklSIMD=table2array(tRunTimeJuliamklSIMD(2:end,2:end));
+vMatrixSizeJuliamklSIMD=table2array(tRunTimeJuliamklSIMD(1,2:end));
+sFunNameJuliamklSIMD=table2array(tRunTimeJuliamklSIMD(2:end,1));
 
 %% Displaying Results
+figureIdx           = 0;
 
-for ii = 1:numTests
-    
+for ii = 1:size(mRunTimeMatlab,1)
+
     figureIdx   = figureIdx + 1;
     hFigure     = figure('Position', figPosMedium);
     hAxes       = axes();
-    set(hAxes, 'NextPlot', 'add');
-    hLineSeries = plot(vMatrixSize, [mRunTimeMatlab(:, ii), mRunTimeJulia(:, ii), mRunTimeJuliaOpt(:, ii)]);
-    set(hLineSeries, 'LineWidth', lineWidthNormal);
-    set(get(hAxes, 'Title'), 'String', ['Test - ', cFunctionString{ii}], ...
-        'FontSize', fontSizeTitle);
-    set(get(hAxes, 'XLabel'), 'String', 'Matrix Size', ...
-        'FontSize', fontSizeAxis);
-    set(get(hAxes, 'YLabel'), 'String', 'Run Time  [Sec]', ...
-        'FontSize', fontSizeAxis);
-    hLegend = ClickableLegend(cLegendString);
+%     ,'LineWidth',lineWidthNormal
+    loglog(vMatrixSizeMatlab,mRunTimeMatlab(ii,:),'-*','LineWidth',lineWidthThin); hold on;
+    loglog(vMatrixSizeJuliamkl,mRunTimeJuliamkl(ii,:),'-*','LineWidth',lineWidthThin); hold on;
+    plotJuliaSIMD=ismember( sFunNameMatlab{ii}, sFunNameJuliamklSIMD ); % if 1 will plot JuliaSIMD
+    if any(plotJuliaSIMD)
+        h=loglog(vMatrixSizeJuliamklSIMD,mRunTimeJuliamklSIMD(plotJuliaSIMD,:),'-*','LineWidth',lineWidthThin);
+        legend('MATLAB','Julia-MKL','Julia-MKL-SIMD','Location','southeast')
+    else
+        legend('MATLAB','Julia-MKL','Location','southeast')
+    end
+    hold off;
+    title(num2str(sFunNameMatlab{ii})); 
+    xlabel('Matrix Size'); 
+    ylabel('Run Time  [micro Seconds]');
     
-    if(generateImages == ON)
+    if(generateImages == 1)
         set(hAxes, 'LooseInset', [0.05, 0.05, 0.05, 0.05]);
         saveas(hFigure,['Figures\Figure', num2str(figureIdx, figureCounterSpec), '.png']);
     end
-
+   
 end
 
 

@@ -1,8 +1,13 @@
 New Changelog:
 
- v 2.0
+ v 2.0:
+		* Use cRunTime cell and then tRuntime table to store run time data intuitively
+		* changed file and folder management
+		* use timeIt instead of tic and toc
+		* now the average of median of different iteration of Run Times is calculated (for different kk)
+		* some other changes to be the same as respective Julia function
 
-
+		* plotting algorithm improved
 
 Old Change log:
 % ----------------------------------------------------------------------------------------------- %
@@ -92,3 +97,19 @@ Old Change log:
 %   -   1.0.000     09/02/2017  Royi Avital
 %       *   First release version.
 % ----------------------------------------------------------------------------------------------- %
+% ----------------------------------------------------------------------------------------------- %
+% Analyze MATLAB & Julia Run Time Results
+% Reference:
+%   1. C.
+% Remarks:
+%   1.  W.
+% TODO:
+%   1.  A
+%   Release Notes:
+%   -   1.0.001     11/02/2017  Royi Avital
+%       *   Added support for Julia Optimized.
+%       *   Saving figures into Figures sub folder.
+%   -   1.0.000     09/02/2017  Royi Avital
+%       *   First release version.
+% ----------------------------------------------------------------------------------------------- %
+

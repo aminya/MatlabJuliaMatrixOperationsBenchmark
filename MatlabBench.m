@@ -1,37 +1,38 @@
-function [ tRunTime ] = MatlabBench( operationMode )
+function [ mRunTime,tRunTime ] = MatlabBench( operationMode )
 
-cRunTimeFunctionsBase = {@MatrixGeneration, @MatrixAddition,@MatrixMultiplication,...
+allFunctions = {@MatrixGeneration, @MatrixAddition,@MatrixMultiplication,...
     @MatrixQuadraticForm, @MatrixReductions, @ElementWiseOperations, @MatrixExp,...
     @MatrixSqrt, @Svd, @Eig,@CholDec, @MatInv, @LinearSystem, @LeastSquares,...
     @CalcDistanceMatrix, @KMeans};
 
-cFunctionStringBase = {'Matrix Generation', 'Matrix Addition', 'Matrix Multiplication',...
+allFunctionsString = {'Matrix Generation', 'Matrix Addition', 'Matrix Multiplication',...
     'Matrix Quadratic Form', 'Matrix Reductions', 'Element Wise Operations',...
     'Matrix Exponential', 'Matrix Square Root', 'SVD', 'Eigen Decomposition',...
     'Cholesky Decomposition', 'Matrix Inversion','Linear System Solution',...
     'Linear Least Squares', 'Squared Distance Matrix', 'K-Means Run Time'};
 
-numFun = length(cRunTimeFunctionsBase);
+numFun = length(allFunctions);
 
 if(operationMode == 1)     % Partial Benchmark
-    vMatrixSize = csvread('vMatrixSizePartial.csv');
-    numIterations = csvread('numIterationsPartial.csv');
+    vMatrixSize = csvread(fullfile('Inputs', 'vMatrixSizePartial.csv'));
+    numIterations = csvread(fullfile('Inputs', 'numIterationsPartial.csv'));
 elseif(operationMode == 2) % Full Benchmark
-    vMatrixSize = csvread('vMatrixSizeFull.csv');
-    numIterations = csvread('numIterationsFull.csv');
+    vMatrixSize = csvread(fullfile('Inputs', 'vMatrixSizeFull.csv'));
+    numIterations = csvread(fullfile('Inputs','numIterationsFull.csv'));
 elseif(operationMode == 0) % Test Benchmark
     vMatrixSize = 2;
     numIterations =  1;
 end
 
 vTestIdx=1:numFun; % change this to do different tests
-cRunTimeFunctions = cRunTimeFunctionsBase(vTestIdx);
-cFunctionString = cFunctionStringBase(vTestIdx);
+cRunTimeFunctions = allFunctions(vTestIdx);
+cFunctionString = allFunctionsString(vTestIdx);
 
 mRunTime = zeros(length(vMatrixSize), length(cRunTimeFunctions), numIterations);
-tRunTime= cell(length(mRunTime),3); % a table containing all the information
+cRunTime= cell(length(allFunctions)+1,length(vMatrixSize)+1); % a table containing all the information
+cRunTime{1,1}="FunctionName\\MatrixSize";
 
-rr=1; % row counter for table
+
 for ii = 1:length(vMatrixSize)
     matrixSize = vMatrixSize(ii);
     mX = randn(matrixSize, matrixSize);
@@ -44,19 +45,17 @@ for ii = 1:length(vMatrixSize)
         for kk = 1:numIterations
 
             fun=@() cRunTimeFunctions{jj}(matrixSize, mX, mY);
-            mRunTime(ii, jj, kk) = timeit(fun); % computes median of bench times
-            tRunTime{rr,1}=num2str(cFunctionString{jj}); tRunTime{rr,2}=num2str(matrixSize); tRunTime{rr,3}=mRunTime(ii, jj, kk);
+            mRunTime(ii, jj, kk) = timeit(fun)*1e6; % computes median of bench times
             
-            rr=rr+1;
+
         end
+        cRunTime{jj+1,1}=num2str(cFunctionString{jj});
+		cRunTime{1,ii+1}=matrixSize;
+		cRunTime{jj+1,ii+1}=mean(mRunTime(ii, jj,:));
     end
 end
 
-t=cell2table(tRunTime,'VariableName',{'FunctionName','MatrixSize','RunTime'});
-writetable(t,fullfile('RunTimeData', 'RunTimeMatlabTable.csv'));
-
-csvwrite(fullfile('RunTimeData', 'RunTimeMatlab.csv'),mRunTime)
-
+tRunTime=cell2table(cRunTime);
 end
 
 
@@ -211,7 +210,7 @@ mA  = mX(:, randperm(matrixSize, numClusters)); %<! Cluster Centroids
 for ii = 1:numIterations
     [~, vClusterId(:)] = min( sum(mA .^ 2, 1).' - (2 .* mA.' * mX), [] , 1);
     for jj = 1:numClusters
-        mA(:, jj) = sum(mX(:, vClusterId == jj), 2) ./ sum(vClusterId == jj);
+        mA(:, jj) = mean(mX(:, vClusterId == jj), 2);
     end
 
 end

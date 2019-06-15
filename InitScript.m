@@ -37,19 +37,12 @@ markerSizeSmall     = 4;
 markerSizeNormal    = 8;
 markerSizeLarge     = 10;
 
-% https://www.mathworks.com/help/matlab/graphics_transition/why-are-plot-lines-different-colors.html
-% https://www.mathworks.com/matlabcentral/answers/160332
-mColorOrder = get(groot, 'DefaultAxesColorOrder');
-
-randomNumberStream  = RandStream('mlfg6331_64', 'NormalTransform', 'Ziggurat');
-subStreamNumber     = round(sum(clock()));
-subStreamNumber     = 162;
-set(randomNumberStream, 'Substream', subStreamNumber);
-RandStream.setGlobalStream(randomNumberStream);
-
-FALSE   = 0;
-TRUE    = 1;
-
-OFF     = 0;
-ON      = 1;
-
+% % https://www.mathworks.com/help/matlab/graphics_transition/why-are-plot-lines-different-colors.html
+% % https://www.mathworks.com/matlabcentral/answers/160332
+% mColorOrder = get(groot, 'DefaultAxesColorOrder');
+% 
+% randomNumberStream  = RandStream('mlfg6331_64', 'NormalTransform', 'Ziggurat');
+% subStreamNumber     = round(sum(clock()));
+% subStreamNumber     = 162;
+% set(randomNumberStream, 'Substream', subStreamNumber);
+% RandStream.setGlobalStream(randomNumberStream);
