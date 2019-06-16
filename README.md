@@ -187,6 +187,7 @@ Download `JuliaMain.jl`and `JuliaBench.jl`
 From console:
 ```
 include("JuliaMain.jl");
+JuliaMain.jl
 ```
 
 ### Run the Benchmark - MATLAB
