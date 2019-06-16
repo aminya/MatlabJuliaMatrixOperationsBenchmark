@@ -31,7 +31,7 @@ for ii = 1:size(mRunTimeMatlab,1)
     figureIdx   = figureIdx + 1;
     hFigure     = figure('Position', figPosMedium);
     hAxes       = axes();
-%     ,'LineWidth',lineWidthNormal
+
     loglog(vMatrixSizeMatlab,mRunTimeMatlab(ii,:),'-*','LineWidth',lineWidthThin); hold on;
     loglog(vMatrixSizeJuliamkl,mRunTimeJuliamkl(ii,:),'-*','LineWidth',lineWidthThin); hold on;
     plotJuliaSIMD=ismember( sFunNameMatlab{ii}, sFunNameJuliamklSIMD ); % if 1 will plot JuliaSIMD
@@ -42,15 +42,15 @@ for ii = 1:size(mRunTimeMatlab,1)
         legend('MATLAB','Julia-MKL','Location','southeast')
     end
     hold off;
-    title(num2str(sFunNameMatlab{ii})); 
-    xlabel('Matrix Size'); 
+    title(num2str(sFunNameMatlab{ii}));
+    xlabel('Matrix Size');
     ylabel('Run Time  [micro Seconds]');
-    
+
     if(generateImages == 1)
         set(hAxes, 'LooseInset', [0.05, 0.05, 0.05, 0.05]);
         saveas(hFigure,['Figures\Figure', num2str(figureIdx, figureCounterSpec), '.png']);
     end
-   
+
 end
 
 
@@ -58,4 +58,3 @@ end
 
 % set(0, 'DefaultFigureWindowStyle', 'normal');
 % set(0, 'DefaultAxesLooseInset', defaultLooseInset);
-

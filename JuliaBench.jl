@@ -7,8 +7,8 @@ function JuliaBench(operationMode)
 	allFunctionsString = ["Matrix Generation", "Matrix Addition", "Matrix Multiplication", "Matrix Quadratic Form", "Matrix Reductions", "Element Wise Operations", "Matrix Exponential", "Matrix Square Root", "Singular Value Decomposition", "Eigen Decomposition","Cholesky Decomposition", "Matrix Inversion", "Linear System Solution", "Linear Least Squares", "Squared Distance Matrix", "K-Means"];
 
 	if (operationMode == 1) # partial benchmark
-		vMatrixSize =  dropdims(DelimitedFiles.readdlm("Inputs\\vMatrixSizePartial.csv", ',',Int64), dims=1);
-		numIterations = dropdims(DelimitedFiles.readdlm("Inputs\\numIterationsPartial.csv", ',',Int64), dims=1);
+		vMatrixSize =  dropdims(readdlm("Inputs\\vMatrixSizePartial.csv", ',',Int64), dims=1);
+		numIterations = dropdims(readdlm("Inputs\\numIterationsPartial.csv", ',',Int64), dims=1);
 
 	elseif (operationMode == 2) # full benchmark
 		vMatrixSize = dropdims(readdlm("Inputs\\vMatrixSizeFull.csv", ',',Int64), dims=1);
@@ -17,7 +17,7 @@ function JuliaBench(operationMode)
 	elseif (operationMode == 0) # Test benchmark
 		vMatrixSize = 2;
 		numIterations =  1;
-		
+
 	end
 
 	numIterations = numIterations[1]; # It is 1x1 Array -> Scalar
