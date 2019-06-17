@@ -22,18 +22,17 @@ function AnalysisJuliaPlotter()
     ii=1;
     for fun in sFunNameMatlab
 
-        display(plot( vMatrixSizeMatlab,[ mRunTimeMatlab[ii,:], mRunTimeJuliamkl[ii,:] ],
+        plt=plot( vMatrixSizeMatlab,[ mRunTimeMatlab[ii,:], mRunTimeJuliamkl[ii,:] ],
         labels=["MATLAB" "Julia-MKL"],legend=:bottomright, markershape =:auto,markersize=2,
         xlabel="Matrix Size", ylabel="Run Time  [micro Seconds]",
-        title="$fun", xaxis=:log, yaxis=:log,dpi=300 ));
+        title="$fun", xscale=:log10, yscale=:log10,dpi=300 );
 
         plotJuliaSIMD=occursin.(fun,sFunNameJuliamklSIMD); # if 1 will plot JuliaSIMD
         if any(plotJuliaSIMD)
-            display(plot!( vMatrixSizeJuliamklSIMD,dropdims(mRunTimeJuliamklSIMD[plotJuliaSIMD,:],dims=1),
-            label="Julia-MKL-SIMD",legend=:bottomright,markershape =:auto,markersize=2,
-            xaxis=:log, yaxis=:log,dpi=300 ));
+            plt=plot!(vMatrixSizeJuliamklSIMD,dropdims(mRunTimeJuliamklSIMD[plotJuliaSIMD,:],dims=1),
+            label="Julia-MKL-SIMD",markershape =:auto,markersize=2);
         end
-
+        display(plt); # display in plot pane
         if(generateImages == 1)
             savefig("Figures\\Julia\\Figure$(ii).png");
         end
