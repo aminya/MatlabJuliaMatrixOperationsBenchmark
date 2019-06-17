@@ -1,4 +1,4 @@
-% Init Script
+% Analysis Init Script
 % Remarks:
 %   1.  sa
 % TODO:
