@@ -198,7 +198,7 @@ MatlabMain
 
 ### Run The Analysis In MATLAB
 
- * Download `InitScript.m`and `AnalyszeRunTimeResults.m`.
+ * Download `AnalysisInitScript.m`and `AnalyszeRunTimeResults.m`.
  * Run both MATLAB and Julia Benchmark to create the CSV files.
  * From MATLAB command line `AnalyszeRunTimeResults`.
  * Images of the performance test will be created and displayed.
