@@ -1,4 +1,4 @@
-function JuliaPlotter()
+function AnalysisJuliaPlotter()
     # Setting Enviorment Parameters
     generateImages=1;
 
