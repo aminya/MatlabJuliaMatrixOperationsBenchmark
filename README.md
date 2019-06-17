@@ -187,7 +187,6 @@ Download `JuliaMain.jl`and `JuliaBench.jl`
 From console:
 ```
 include("JuliaMain.jl");
-JuliaMain.jl
 ```
 
 ### Run the Benchmark - MATLAB
@@ -197,10 +196,18 @@ From MATLAB command line :
 MatlabMain
 ```
 
-### Run The Analysis
+### Run The Analysis In MATLAB
+
  * Download `InitScript.m`and `AnalyszeRunTimeResults.m`.
  * Run both MATLAB and Julia Benchmark to create the CSV files.
  * From MATLAB command line `AnalyszeRunTimeResults`.
+ * Images of the performance test will be created and displayed.
+
+### Run The Analysis In Julia
+
+ * Download `JuliaPlotter.jl`and `AnalyszeRunTimeResults.jl`.
+ * Run both MATLAB and Julia Benchmark to create the CSV files.
+ * From Julia command line `include("AnalyszeRunTimeResults.jl");`.
  * Images of the performance test will be created and displayed.
 
 ## Royi Remarks (old)
