@@ -1,6 +1,6 @@
 %% Setting Enviorment Parameters
 
-InitScript;
+AnalysisInitScript;
 
 figureCounterSpec   = '%04d';
 
