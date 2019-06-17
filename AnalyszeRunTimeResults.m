@@ -32,11 +32,11 @@ for ii = 1:size(mRunTimeMatlab,1)
     hFigure     = figure('Position', figPosMedium);
     hAxes       = axes();
 
-    loglog(vMatrixSizeMatlab,mRunTimeMatlab(ii,:),'-*','LineWidth',lineWidthThin); hold on;
-    loglog(vMatrixSizeJuliamkl,mRunTimeJuliamkl(ii,:),'-*','LineWidth',lineWidthThin); hold on;
+    loglog(vMatrixSizeMatlab,mRunTimeMatlab(ii,:),'-o','LineWidth',lineWidthThin,'MarkerFaceColor','b'); hold on;
+    loglog(vMatrixSizeJuliamkl,mRunTimeJuliamkl(ii,:),'-s','LineWidth',lineWidthThin,'MarkerFaceColor','r'); hold on;
     plotJuliaSIMD=ismember( sFunNameMatlab{ii}, sFunNameJuliamklSIMD ); % if 1 will plot JuliaSIMD
     if any(plotJuliaSIMD)
-        h=loglog(vMatrixSizeJuliamklSIMD,mRunTimeJuliamklSIMD(plotJuliaSIMD,:),'-*','LineWidth',lineWidthThin);
+        h=loglog(vMatrixSizeJuliamklSIMD,mRunTimeJuliamklSIMD(plotJuliaSIMD,:),'-*','LineWidth',lineWidthThin,'MarkerFaceColor','y');
         legend('MATLAB','Julia-MKL','Julia-MKL-SIMD','Location','southeast')
     else
         legend('MATLAB','Julia-MKL','Location','southeast')
