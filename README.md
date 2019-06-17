@@ -205,7 +205,7 @@ MatlabMain
 
 ### Run The Analysis In Julia
 
- * Download `JuliaPlotter.jl`and `AnalyszeRunTimeResults.jl`.
+ * Download `AnalysisJuliaPlotter.jl`and `AnalyszeRunTimeResults.jl`.
  * Run both MATLAB and Julia Benchmark to create the CSV files.
  * From Julia command line `include("AnalyszeRunTimeResults.jl");`.
  * Images of the performance test will be created and displayed.
