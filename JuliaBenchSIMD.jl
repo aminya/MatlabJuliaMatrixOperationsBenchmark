@@ -2,7 +2,7 @@
 
 function JuliaBenchSIMD( operationMode )
 
-    allFunctions = [MatrixAddition, MatrixMultiplication, ElementWiseOperations];
+    allFunctions = [MatrixAddition, MatrixMultiplication, ElementWiseOperations]; # only SIMD functions to run
 
 
     allFunctionsString = [ "Matrix Addition", "Matrix Multiplication", "Element Wise Operations"];

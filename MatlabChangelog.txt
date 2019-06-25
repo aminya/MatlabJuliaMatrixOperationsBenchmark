@@ -1,13 +1,19 @@
 New Changelog:
 
  v 2.0:
+ 		Matlab Main (MatlabMain-MatlabBench):
+
 		* Use cRunTime cell and then tRuntime table to store run time data intuitively
 		* changed file and folder management
 		* use timeIt instead of tic and toc
 		* now the average of median of different iteration of Run Times is calculated (for different kk)
 		* some other changes to be the same as respective Julia function
 
+		Matlab Analyzer (AnalyszeRunTimeResults-AnalysisInitScript):
+		
 		* plotting algorithm improved
+		* use mat files instead of csv
+		* use of tables
 
 Old Change log:
 % ----------------------------------------------------------------------------------------------- %

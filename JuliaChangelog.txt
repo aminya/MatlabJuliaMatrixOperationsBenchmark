@@ -3,6 +3,9 @@ New Changelog:
 Release Notes:
 
 	2.0: 
+
+		Julia Main (JuliaMain-JuliaBench-JuliaBenchSIMD):
+
 		* Combined separated function files JuliaMatrixBenchmark and JuliaMatrixBenchmarkOp into JuliaBench and JuliaBenchSIMD respectively for easier access
 		* Used @benchmark instead of deprecated and inaccurate tic() and toq(), so all functions now just include the algorithm or operation. Benchmark result may not be comparable to ones in previous versions.
 		* @benchmarks calls allFunctions in local scope (using $). Then the minimum run time among different benchmarks for each function is chosen.
@@ -24,6 +27,15 @@ Release Notes:
 		* added 0 benchmark operation mode which is for fast testing only
 		* changed file and folder management
 		* now average of different iteration of Run Times is calculated (for different kk)
+		* automatic work directory setter
+		* In JuliaBenchSIMD, functions that are identical to non SIMD versions are removed from allFunctions
+		* Two types of BLAS is used (MKL.jl and default Julia Blas)
+
+
+		Julia Analyzer (AnalyszeRunTimeResults-AnalysisJuliaPlotter):
+
+		* Julia Analyzer added for creating plots
+
 
 Old changelog:
 

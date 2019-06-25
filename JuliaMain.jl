@@ -1,3 +1,4 @@
+cd(dirname(@__FILE__))
 
 clearconsole();
 
