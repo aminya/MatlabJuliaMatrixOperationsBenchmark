@@ -42,7 +42,7 @@ Multiplication of 2 square matrices after a scalar is added to each.
 ### Matrix Quadratic Form
 
 Calculation of Matrix / Vector Quadratic Form.  
- * MATLAB Code - `mA = (scalarA + mX) * (scalarB + mY)`.
+ * MATLAB Code - `mA = ((mX * vX).' * (mX * vX)) + (vB.' * vX) + sacalrC;`.
  * Julia Code - `	mA = (transpose(mX * vX) * (mX * vX)) .+ (transpose(vB) * vX) .+ scalarC;` (Using the dot for [Loop Fusion][50]).
 
 ![Matrix Quadratic Form][04]
@@ -53,7 +53,7 @@ Set of operations which reduce the matrix dimension (Works along one dimension).
 The operation is done on 2 different matrices on along different dimensions.  
 The result is summed with broadcasting to generate a new matrix.
 
- * MATLAB Code - `mA = (vX.' * mA * vX) + (vB.' * vX) + sacalrC;`.
+ * MATLAB Code - `mA = sum(mX, 1) + min(mY, [], 2);`.
  * Julia Code - `mA = sum(mX, dims=1) .+ minimum(mY, dims=2); ` (Using the dot for [Loop Fusion][50]).
 
 ![Matrix Reductions][05]
