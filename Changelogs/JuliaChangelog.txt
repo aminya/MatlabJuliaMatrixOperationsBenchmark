@@ -31,7 +31,6 @@ Release Notes:
 		* In JuliaBenchSIMD, functions that are identical to non SIMD versions are removed from allFunctions
 		* Two types of BLAS is used (MKL.jl and default Julia Blas)
 
-
 		Julia Analyzer (AnalyszeRunTimeResults-AnalysisJuliaPlotter):
 
 		* Julia Analyzer added for creating plots

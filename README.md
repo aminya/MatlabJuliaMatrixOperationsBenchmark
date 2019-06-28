@@ -2,8 +2,9 @@
 
 ## Updated by Amin Yahyaabadi:
    * Julia language used is updated to V 1.1.1
+   * Both Julia and Julia_MKL are tested.
    * Better benchmarking tools are used both in Julia and MATLAB
-   * Many changes and updates are made. For more details refer to changelog files that are included.
+   * Many improvements and updates are made. For more details refer to changelog files: https://github.com/aminya/MatlabJuliaMatrixOperationsBenchmark/blob/master/Changelogs/
 
 This is a small benchmark of some common Matrix Operations (Linear Algebra Oriented).  
 The purpose of this Benchmark is to display Run Time of various commonly used operations by Signal / Image / Data Processing Algorithm Engineers. 
@@ -167,19 +168,32 @@ Running 10 iterations of the K-Means Algorithm.
  https://www.dell.com/en-ca/work/shop/dell-tablets/latitude-5590/spd/latitude-15-5590-laptop
  * CPU - Intel(R) Core(TM) i5-8250U @ 1.6 [GHz] 1800 Mhz, 4 Cores, 8 Logical Processors.
  * Memory - 1x8GB DDR4 2400MHz Non-ECC 
+ * Windows 10 Professional 64 Bit.
+
  * MATLAB R2018b.
     * BLAS Version (`version -blas`) - `Intel(R) Math Kernel Library Version 2018.0.1 Product Build 20171007 for Intel(R) 64 architecture applications, CNR branch AVX2`
     * LAPACK Version (`version -lapack`) - `Intel(R) Math Kernel Library Version 2018.0.1 Product Build 20171007 for Intel(R) 64 architecture applications CNR branch AVX2  Linear Algebra PACKage Version 3.7.0`
-    
- * Julia 1.1.1 + MKL.
+
+Two version of Julia was used:
+
+ * JuliaMKL: Julia 1.1.1 + MKL.
      * Julia Version (`versioninfo()`) - `Julia Version 1.1.1 Commit 55e36cc308 (2019-05-16 04:10 UTC)`;
-     * BLAS Version - `BLAS: Intel MKL `. https://github.com/JuliaComputing/MKL.jl
+     * BLAS Version - `LinearAlgebra.BLAS.vendor(): Intel MKL `. https://github.com/JuliaComputing/MKL.jl , For tutrial to instal: https://github.com/aminya/MKL.jl/tree/patch-1
      * LAPACK Version - `libopenblas64_`.
      * LIBM Version - `libopenlibm`.
      * LLVM Version - `libLLVM-6.0.1 (ORCJIT, skylake)`.
      * JULIA_EDITOR = "C:\~\atom\app-1.38.1\atom.exe"  -a
      * JULIA_NUM_THREADS = 4
- * Windows 10 Professional 64 Bit.
+
+ * Julia: JuliaPro 1.1.1.1
+     * Julia Version (`versioninfo()`) - `Julia Version 1.1.1 Commit 55e36cc308 (2019-05-16 04:10 UTC)`;
+     * BLAS Version - `LinearAlgebra.BLAS.vendor(): openBlas64 `.
+     * LAPACK Version - `libopenblas64_`.
+     * LIBM Version - `libopenlibm`.
+     * LLVM Version - `libLLVM-6.0.1 (ORCJIT, skylake)`.
+     * JULIA_EDITOR = "C:\JuliaPro-1.1.1.1\app-1.36.0\atom.exe"  -a
+     * JULIA_NUM_THREADS = 4
+
 
 ## How to Run
 ### Run the Benchmark - Julia
@@ -198,7 +212,7 @@ MatlabMain
 
 ### Run The Analysis In MATLAB
 
- * Download `AnalysisInitScript.m`and `AnalyszeRunTimeResults.m`.
+ * Download `AnalyszeRunTimeResults.m`.
  * Run both MATLAB and Julia Benchmark to create the CSV files.
  * From MATLAB command line `AnalyszeRunTimeResults`.
  * Images of the performance test will be created and displayed.
@@ -210,36 +224,40 @@ MatlabMain
  * From Julia command line `include("AnalyszeRunTimeResults.jl");`.
  * Images of the performance test will be created and displayed.
 
-## Royi Remarks (old)
+## To Do:
+ * Check if Julia code is efficient. using https://github.com/JunoLab/Traceur.jl and https://docs.julialang.org/en/v1/manual/performance-tips/index.html
+ 
+ * Add more tests (Some real world algorithms)
+     * Orthogonal Matching Pursuit.
+     * Reweighted Iterative Least Squares.
+
+ * Add Python (NumPy): Code has been converted from MATLAB to python using smop. Still needs working https://github.com/aminya/smop
+ * Add Octave.
+
+## Discourse Discusion Forume:
+https://discourse.julialang.org/t/benchmark-matlab-julia-for-matrix-operations/2000
+ 
+  [01]: https://github.com/aminya/MatlabJuliaMatrixOperationsBenchmark/blob/master/Figures/Figure1.png
+  [02]: https://github.com/aminya/MatlabJuliaMatrixOperationsBenchmark/blob/master/Figures/Figure2.png
+  [03]: https://github.com/aminya/MatlabJuliaMatrixOperationsBenchmark/blob/master/Figures/Figure3.png
+  [04]: https://github.com/aminya/MatlabJuliaMatrixOperationsBenchmark/blob/master/Figures/Figure4.png
+  [05]: https://github.com/aminya/MatlabJuliaMatrixOperationsBenchmark/blob/master/Figures/Figure5.png
+  [06]: https://github.com/aminya/MatlabJuliaMatrixOperationsBenchmark/blob/master/Figures/Figure6.png
+  [07]: https://github.com/aminya/MatlabJuliaMatrixOperationsBenchmark/blob/master/Figures/Figure7.png
+  [08]: https://github.com/aminya/MatlabJuliaMatrixOperationsBenchmark/blob/master/Figures/Figure8.png
+  [09]: https://github.com/aminya/MatlabJuliaMatrixOperationsBenchmark/blob/master/Figures/Figure9.png
+  [10]: https://github.com/aminya/MatlabJuliaMatrixOperationsBenchmark/blob/master/Figures/Figure10.png
+  [11]: https://github.com/aminya/MatlabJuliaMatrixOperationsBenchmark/blob/master/Figures/Figure11.png
+  [12]: https://github.com/aminya/MatlabJuliaMatrixOperationsBenchmark/blob/master/Figures/Figure12.png
+  [13]: https://github.com/aminya/MatlabJuliaMatrixOperationsBenchmark/blob/master/Figures/Figure13.png
+  [14]: https://github.com/aminya/MatlabJuliaMatrixOperationsBenchmark/blob/master/Figures/Figure14.png
+  [15]: https://github.com/aminya/MatlabJuliaMatrixOperationsBenchmark/blob/master/Figures/Figure15.png
+  [16]: https://github.com/aminya/MatlabJuliaMatrixOperationsBenchmark/blob/master/Figures/Figure16.png
+  [50]: http://julialang.org/blog/2017/01/moredots
+
+## Old Royi Remarks
  * I'm not an expert in Julia (Actually this was my first time coding Julia). Hence, if there are ways to improve the run time, please share with me. I did took advise from [More Dots: Syntactic Loop Fusion in Julia][50].
  * This is only a small sub set of operations. I will expand it with time. If you have ideas for small micro benchmark to be added, please share.
  * For each function the output was set to dependent on the calculation which was timed to prevent JIT optimizations which excludes the calculation (MATLAB infers the calculation has no effect on the output and doesn't run it).
  * The MATLAB code uses Broadcasting which is a feature added on MATLAB R2016b. Hence the test requires this version or one must adjust the code (Use `bsxfun()`).
  * There is no perfect test and this is far from being one. All it tried to do is measure run time of few common operations done by Signal / Image / Data Processing Algorithm Engineers. If it can assist MATLAB and Julia creators to improve performance and tune their implementation it served it purpose.
-
-## ToDo
- * Check if Julia code is efficient.
- * Add Python (NumPy): Code has been converted from MATLAB to python using smop. Still needs working https://github.com/aminya/smop
- * Add Octave.
- * Add more tests (Some real world algorithms)
-     * Orthogonal Matching Pursuit.
-     * Reweighted Iterative Least Squares.
- * Devectorize Element Wise Operations (Loop Fusion isn't working yet). See <https://discourse.julialang.org/t/benchmark-matlab-julia-for-matrix-operations/2000/7>.
- 
-  [01]: https://github.com/aminya/MatlabJuliaMatrixOperationsBenchmark/blob/master/Figures/Figure0001.png
-  [02]: https://github.com/aminya/MatlabJuliaMatrixOperationsBenchmark/blob/master/Figures/Figure0002.png
-  [03]: https://github.com/aminya/MatlabJuliaMatrixOperationsBenchmark/blob/master/Figures/Figure0003.png
-  [04]: https://github.com/aminya/MatlabJuliaMatrixOperationsBenchmark/blob/master/Figures/Figure0004.png
-  [05]: https://github.com/aminya/MatlabJuliaMatrixOperationsBenchmark/blob/master/Figures/Figure0005.png
-  [06]: https://github.com/aminya/MatlabJuliaMatrixOperationsBenchmark/blob/master/Figures/Figure0006.png
-  [07]: https://github.com/aminya/MatlabJuliaMatrixOperationsBenchmark/blob/master/Figures/Figure0007.png
-  [08]: https://github.com/aminya/MatlabJuliaMatrixOperationsBenchmark/blob/master/Figures/Figure0008.png
-  [09]: https://github.com/aminya/MatlabJuliaMatrixOperationsBenchmark/blob/master/Figures/Figure0009.png
-  [10]: https://github.com/aminya/MatlabJuliaMatrixOperationsBenchmark/blob/master/Figures/Figure0010.png
-  [11]: https://github.com/aminya/MatlabJuliaMatrixOperationsBenchmark/blob/master/Figures/Figure0011.png
-  [12]: https://github.com/aminya/MatlabJuliaMatrixOperationsBenchmark/blob/master/Figures/Figure0012.png
-  [13]: https://github.com/aminya/MatlabJuliaMatrixOperationsBenchmark/blob/master/Figures/Figure0013.png
-  [14]: https://github.com/aminya/MatlabJuliaMatrixOperationsBenchmark/blob/master/Figures/Figure0014.png
-  [15]: https://github.com/aminya/MatlabJuliaMatrixOperationsBenchmark/blob/master/Figures/Figure0015.png
-  [16]: https://github.com/aminya/MatlabJuliaMatrixOperationsBenchmark/blob/master/Figures/Figure0016.png
-  [50]: http://julialang.org/blog/2017/01/moredots

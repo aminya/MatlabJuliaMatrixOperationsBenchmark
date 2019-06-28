@@ -9,11 +9,13 @@ New Changelog:
 		* now the average of median of different iteration of Run Times is calculated (for different kk)
 		* some other changes to be the same as respective Julia function
 
-		Matlab Analyzer (AnalyszeRunTimeResults-AnalysisInitScript):
+		Matlab Analyzer (AnalyszeRunTimeResults):
 		
-		* plotting algorithm improved
+		* plotting algorithm was improved
 		* use mat files instead of csv
 		* use of tables
+		* removed unnecessary AnalysisInitScript and the logic was added in visualization adjustment
+
 
 Old Change log:
 % ----------------------------------------------------------------------------------------------- %
